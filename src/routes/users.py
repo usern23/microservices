@@ -21,7 +21,6 @@ async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     controller: UserController = Depends(get_user_controller),
 ):
-    # принимаем либо email, либо username в поле username
     return await controller.login_user(form_data.username, form_data.password)
 
 @router.get("/user", response_model=User)

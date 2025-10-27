@@ -30,7 +30,6 @@ def verify_password(plain_password, hashed_password):
 
 
 def get_password_hash(password):
-    # guard extremely long passwords to avoid backend issues
     if len(password.encode("utf-8")) > 1024:
         raise HTTPException(status_code=400, detail="Password too long")
     try:

@@ -10,7 +10,6 @@ from .controllers.articles import ArticleController
 from .controllers.comments import CommentController as CommentCtrl
 
 
-# Фабрика для создания контроллеров
 async def get_user_controller(session: AsyncSession = Depends(get_session)):
     return UserController(UserRepository(session))
 

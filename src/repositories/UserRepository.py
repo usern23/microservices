@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..models.Users import User
 import uuid
 
-# Мы создадим этот базовый репозиторий в следующем шаге
 from .base import BaseRepository 
 
 class UserRepository(BaseRepository):

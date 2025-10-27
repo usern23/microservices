@@ -31,7 +31,7 @@ class CommentController:
             author_id=user.id,
             body=comment_data.body
         )
-        # Нужно пересобрать объект, чтобы автор был подгружен
+
         db_comment = await self.comment_repo.get_comment_by_id(db_comment.id)
         return Comment.model_validate(db_comment)
 
