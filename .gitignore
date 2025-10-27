@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.env
+
+# Virtual environment
+venv/
+env/
+
+# Docker data
+data/
+
+# IDE
+.vscode/
+.idea/
