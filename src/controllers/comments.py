@@ -43,12 +43,18 @@ class CommentController:
         comments = await self.comment_repo.get_by_article_slug(article.id)
         return [Comment.model_validate(comment) for comment in comments]
 
-    async def delete_comment(self, comment_id: uuid.UUID, current_user: User):
+    async def delete_comment(self, slug: str, comment_id: uuid.UUID, current_user: User):
+        article = await self.article_repo.get_by_slug(slug)
+        if not article:
+            raise HTTPException(status_code=404, detail="Article not found")
+
         comment = await self.comment_repo.get_comment_by_id(comment_id)
         user = await self.user_repo.get_by_username(current_user.username)
 
         if not comment:
             raise HTTPException(status_code=404, detail="Comment not found")
+        if comment.article_id != article.id:
+            raise HTTPException(status_code=400, detail="Comment does not belong to this article")
         if comment.created_by != user.id:
             raise HTTPException(status_code=403, detail="Not enough permissions")
 

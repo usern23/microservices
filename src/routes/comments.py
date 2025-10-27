@@ -27,9 +27,10 @@ async def get_comments_for_article(
 
 @router.delete("/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_comment(
+    slug: str,
     comment_id: uuid.UUID,
     current_user: Annotated[User, Depends(get_current_user)],
     controller: CommentController = Depends(get_comment_controller),
 ):
-    await controller.delete_comment(comment_id, current_user)
+    await controller.delete_comment(slug, comment_id, current_user)
     return {"ok": True}
