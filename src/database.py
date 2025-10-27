@@ -2,7 +2,6 @@ import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-# Собираем URL для подключения к БД из отдельных переменных окружения
 def _clean(v: str) -> str:
     if v is None:
         return v
