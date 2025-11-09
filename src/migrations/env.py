@@ -1,15 +1,14 @@
 from logging.config import fileConfig
 import os
-from sqlalchemy import pool, create_engine
+from sqlalchemy import pool
+from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 import asyncio
 
 config = context.config
 fileConfig(config.config_file_name)
 
-# Собираем URL для подключения к БД из переменных окружения
 def _clean(v: str) -> str:
-    # Remove BOM/zero-width/non-breaking spaces and trim
     if v is None:
         return v
     return (
@@ -22,8 +21,7 @@ POSTGRES_HOST = _clean(os.environ.get("POSTGRES_HOST", "db"))
 POSTGRES_PORT = _clean(os.environ.get("POSTGRES_PORT", "5432"))
 POSTGRES_DB = _clean(os.environ.get("POSTGRES_DB", "mydatabase"))
 
-# Use synchronous engine for Alembic to avoid async quirks
-DATABASE_URL = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 print(f"[alembic] Using DB URL: {config.get_main_option('sqlalchemy.url')}")
 
@@ -43,18 +41,21 @@ def run_migrations_offline():
     with context.begin_transaction():
         context.run_migrations()
 
-def run_migrations_online():
-    print("[alembic] Running in ONLINE mode")
-    connectable = create_engine(
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
+    with context.begin_transaction():
+        context.run_migrations()
+
+async def run_migrations_online():
+    print("[alembic] Running in ONLINE mode (async)")
+    connectable = create_async_engine(
         config.get_main_option("sqlalchemy.url"), poolclass=pool.NullPool
     )
-    with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
-        with context.begin_transaction():
-            context.run_migrations()
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+    await connectable.dispose()
 
-# Ensure migrations run when Alembic imports this module
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    asyncio.run(run_migrations_online())

@@ -24,27 +24,27 @@ services:
       start_period: 30s
     profiles: ["prod", "dev"]
 
-#   db:
-#     image: postgres:16
-#     container_name: blog_db
-#     env_file:
-#       - .env
-#     environment:
-#       - POSTGRES_DB=${POSTGRES_DB}
-#       - POSTGRES_USER=${POSTGRES_USER}
-#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#       - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - pg_data:/var/lib/postgresql/data
-#     healthcheck:
-#       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#       start_period: 20s
-#     profiles: ["prod", "dev"]
+  db:
+    image: postgres:16
+    container_name: blog_db
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    profiles: ["prod", "dev"]
 
-# volumes:
-#   pg_data:
+volumes:
+  pg_data:
